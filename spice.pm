@@ -1,4 +1,5 @@
 package spice ;
+require 5.001 ;
 
 ##################################################################
 #    Copyright (c) 2000 Rohit Sharma. All rights reserved.
@@ -46,24 +47,24 @@ sub spiceInit {
    do {
       carp "no spice file given." ;
       $spice::error = "no spice file given." ;
-      return -1;
+      return "-1";
       } unless ( defined $file ) ;
    do {
       carp "spice file $file is not a plain text file." ;
       $spice::error = "spice file $file is not a plain text file." ;
-      return -1;
+      return "-1";
       }unless ( -f $file && -T $file ) ;
 
    Log ( "Processing spice file $file: phase1\n" )
       if ( $spice::verbose ) ;
    my $retValue ;
    $retValue = processSpice ( $file ) ;
-   return -1 if ( $retValue == -1 ) ;
+   return "-1" if ( $retValue == "-1" ) ;
 
    Log ( "Processing spice file $file: phase2\n" )
       if ( $spice::verbose ) ;
    $retValue = readSpice ( $spice::tmpFile ) ;
-   return -1 if ( $retValue == -1 ) ;
+   return "-1" if ( $retValue == "-1" ) ;
    return 0; # Initialization sucessful.
    }
 
@@ -75,12 +76,12 @@ sub processSpice {
    do {
       carp "Could not open new spice File $spice::tmpFile for writing." ;
       $spice::error = "Could not open new spice File $spice::tmpFile for writing." ;
-      return -1 ;
+      return "-1" ;
       } unless open ( TMPSPICE, ">$spice::tmpFile" ) ;
    do {
       carp "Could not open spice File $file for reading." ;
       $spice::error = "Could not open spice File $file for reading." ;
-      return -1 ;
+      return "-1" ;
       } unless open ( SPICE, "<$file" ) ;
 
    Log ( "reading spice file ..." ) if ( $spice::verbose ) ;
@@ -118,14 +119,14 @@ sub readSpice ( ) {
    do {
       carp "Could not open new spice File $file for reading." ;
       $spice::error = "Could not open new spice File $file for reading." ;
-      return -1 ;
+      return "-1" ;
       } unless open ( TMPSPICE, "<$file" ) ;
 
    my $line ; 
    while ( $line = <TMPSPICE> ) {
       if( $line =~ m/^\s*\+/ ) { # self validation. 
          Log ( "processSpice subroutine didnt work correctly. Bug in the spice.pm\n" ) ;
-         return -1 ;
+         return "-1" ;
          }
 
       next unless ( $line =~ m/^\s*x/i ||
@@ -189,7 +190,7 @@ sub getBulkConnections {
    $spice::error = "" ;
    $spice::warn = "" ;
    $spice::warn = "This subroutine has not been implemented yet.\n" ;
-   return -1;
+   return "-1";
    }
 
 sub getSubcktName {
@@ -201,7 +202,7 @@ sub getSubcktName {
    @parts = split /\s+/, $stmt ;
 if ($spice::DEBUG_ ) { print "\t\tsubckt Name : $parts[0].\n" ; }
    if ( $parts[0] ) { return $parts[0]; }
-   else { return -1 ; }
+   else { return "-1" ; }
    }
 
 sub getSubckt {
@@ -212,7 +213,7 @@ sub getSubckt {
       }
    else {
       $spice::error = "Subckt definition not found in spice." ;
-      return -1 ;
+      return "-1" ;
       } 
    }
 
@@ -228,7 +229,7 @@ sub getCapacitors {
       }
    else {
       $spice::error = "Subckt definition not found in spice." ;
-      return -1 ;
+      return "-1" ;
       }
    my @list ;
    my $line ;
@@ -255,7 +256,7 @@ sub getResistors {
       }
    else {
       $spice::error = "Subckt definition not found in spice." ;
-      return -1 ;
+      return "-1" ;
       }
    my @list ;
    my $line ;
@@ -274,13 +275,13 @@ sub getResCapName {
    my ( $stmt ) = @_ ;
    if ( $stmt !~ m/^\s*[rc]/i ) {
       $spice::error = "Not a valid resistor or capacitor declaration.  :$stmt" ;
-      return -1 ;
+      return "-1" ;
       }
    my @tmp ;
    @tmp = split /\s+/, $stmt ;
    if ( $#tmp < 3 ) {
       $spice::error = "Not a valid resistor or capacitor declaration.  :$stmt" ;
-      return -1 ;
+      return "-1" ;
       }
    return ( $tmp[0], $tmp[3] ) ;
    }
@@ -297,7 +298,7 @@ sub getTransistors {
       }
    else {
       $spice::error = "Subckt definition not found in spice." ;
-      return -1 ;
+      return "-1" ;
       }
    my @list ;
    my $line ;
@@ -316,7 +317,7 @@ sub getTxName {
    my ( $stmt ) = @_ ;
    if ( $stmt !~ m/^\s*m/i ) {
       $spice::error = "Not a valid instance statement.  :$stmt" ;
-      return -1 ;
+      return "-1" ;
       }
    my $tx ;
    my $type ;
@@ -330,7 +331,7 @@ sub getTxName {
          }
       else {
          $spice::error = "could not find transistor type." ;
-         return -1 ;
+         return "-1" ;
          } 
       }
    else {
@@ -343,7 +344,7 @@ sub getTxName {
          }
       else {
          $spice::error = "could not find transistor type." ;
-         return -1 ;
+         return "-1" ;
          }
       }
    return ( $tx, $type ) ;
@@ -361,7 +362,7 @@ sub getInstances {
       }
    else {
       $spice::error = "Subckt definition not found in spice." ;
-      return -1 ;
+      return "-1" ;
       }
    my @list ;
    my $line ;
@@ -380,7 +381,7 @@ sub getInstName {
    my ( $stmt ) = @_ ;
    if ( $stmt !~ m/^\s*x/i ) {
       $spice::error = "Not a valid instance statement." ;
-      return -1 ;
+      return "-1" ;
       }
    my $inst ;
    my $subckt ;
@@ -394,7 +395,7 @@ sub getInstName {
          }
       else {
          $spice::error = "could not find subckt name." ;
-         return -1 ;
+         return "-1" ;
          } 
       }
    else {
@@ -407,7 +408,7 @@ sub getInstName {
          }
       else {
          $spice::error = "could not find subckt name." ;
-         return -1 ;
+         return "-1" ;
          }
       }
    return ( $inst, $subckt ) ;
@@ -448,7 +449,7 @@ sub getSubcktList {
    @list =  keys %spice::subckts ;
    if ( $#list == -1 ) {
       $spice::error = "could not find subckt name." ;
-      return -1 ;
+      return "-1" ;
       }
    return @list ;
    }
@@ -566,7 +567,7 @@ else {
 
 my $init ;
 $init = spiceInit ( $spiceFile ) ;
-   if ( $init == -1 ) {
+   if ( $init == "-1" ) {
      print "$spice::error\n" ;
      exit 0 ;
      }
